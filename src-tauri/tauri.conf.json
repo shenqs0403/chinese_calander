@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "ChineseCalander",
+  "productName": "ChineseCalendar",
   "version": "1.0.0",
-  "identifier": "com.example.chinese-calander",
+  "identifier": "com.linglongopc.chinese-calendar",
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
@@ -35,9 +35,11 @@
     "targets": ["deb", "rpm"],
     "linux": {
       "deb": {
+        "desktopTemplate": "desktop-template.hbs",
         "depends": ["libwebkit2gtk-4.1-0", "libgtk-3-0"]
       },
       "rpm": {
+        "desktopTemplate": "desktop-template.hbs",
         "depends": ["webkit2gtk4.1", "gtk3"]
       }
     }

@@ -141,6 +141,8 @@
           size="small"
           class="jump-picker"
           @update:value="jumpTo"
+          fast-year-select
+          fast-month-select
         />
       </div>
       <NButton size="small" quaternary @click="shiftMonth(1)">▶</NButton>
@@ -250,7 +252,7 @@
   }
 
   .jump-picker {
-    width: 90px;
+    width: 120px;
   }
 
   .grid-header,
