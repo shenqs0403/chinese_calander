@@ -145,6 +145,7 @@ import {
   .left {
     width: 430px;
     min-width: 430px;
+    height: 500px;
     background: v-bind("palette.card");
     border: 1px solid v-bind("palette.border");
     border-radius: 12px;
@@ -155,7 +156,7 @@ import {
     flex: 1;
     min-width: 0;
     min-height: 0;
-    height: 450px;
+    height: 500px;
     display: flex;
     flex-direction: column;
     background: v-bind("palette.card");
