@@ -10,6 +10,8 @@ import {
   lightTheme,
   zhCN,
 } from "naive-ui";
+  import { invoke } from "@tauri-apps/api/core";
+  import { getCurrentWindow } from "@tauri-apps/api/window";
   import CalendarPanel from "./components/CalendarPanel.vue";
   import DetailPanel from "./components/DetailPanel.vue";
   import LuckyDayQuery from "./components/LuckyDayQuery.vue";
@@ -31,9 +33,26 @@ import {
     localStorage.setItem(STORAGE_THEME_KEY, v ? "dark" : "light");
   }
 
+  function minimizeWindow() {
+    try {
+      getCurrentWindow().minimize();
+    } catch (e) {
+      console.error("最小化失败", e);
+    }
+  }
+
+  function closeWindow() {
+    try {
+      invoke("exit_app");
+    } catch (e) {
+      console.error("退出程序失败", e);
+    }
+  }
+
   const selectedDate = ref(new Date());
   const marks = ref<Map<string, DayMark>>(new Map());
   const luckyVisible = ref(false);
+  const isWayland = ref(false);
 
   const palette = computed(() =>
     isDark.value
@@ -42,6 +61,11 @@ import {
   );
 
   onMounted(async () => {
+    try {
+      isWayland.value = await invoke<boolean>("is_wayland");
+    } catch (e) {
+      console.error("获取环境失败", e);
+    }
     try {
       const data = await ensureHolidayData();
       marks.value = buildMarks(data);
@@ -55,9 +79,11 @@ import {
   <n-config-provider :theme="theme" :locale="zhCN" :date-locale="dateZhCN">
     <n-global-style />
     <n-message-provider>
-      <div class="app" :class="{ dark: isDark }">
-        <header class="app-header">
-          <span class="brand">中国历</span>
+      <div class="app" :class="{ dark: isDark, wayland: isWayland }">
+        <header class="app-header" data-tauri-drag-region="deep">
+          <div class="drag-area">
+            <span class="brand">中国历</span>
+          </div>
           <span class="header-right">
             <NButton type="primary" size="small" @click="luckyVisible = true">
               吉日查询
@@ -70,6 +96,14 @@ import {
               <template #checked-icon>☾</template>
               <template #unchecked-icon>☀</template>
             </NSwitch>
+            <span class="window-controls">
+              <button class="win-btn" title="最小化" @click="minimizeWindow">
+                ─
+              </button>
+              <button class="win-btn close-btn" title="关闭" @click="closeWindow">
+                ✕
+              </button>
+            </span>
           </span>
         </header>
         <main class="app-main">
@@ -111,13 +145,27 @@ import {
     background: v-bind("palette.bg");
   }
 
+  .app.wayland {
+    border: 1px solid #000;
+  }
+
   .app-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 20px;
+    height: 44px;
+    padding: 0 12px;
     border-bottom: 1px solid v-bind("palette.border");
     background: v-bind("palette.card");
+    user-select: none;
+  }
+
+  .drag-area {
+    display: flex;
+    align-items: center;
+    align-self: stretch;
+    flex: 1;
+    min-width: 0;
   }
 
   .brand {
@@ -131,6 +179,40 @@ import {
     display: flex;
     align-items: center;
     gap: 12px;
+  }
+
+  .window-controls {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: 4px;
+    padding-left: 12px;
+    border-left: 1px solid v-bind("palette.border");
+  }
+
+  .win-btn {
+    width: 30px;
+    height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: v-bind("palette.text");
+    font-size: 14px;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .win-btn:hover {
+    background: v-bind("palette.border");
+  }
+
+  .close-btn:hover {
+    background: #e5484d;
+    color: #fff;
   }
 
   .app-main {

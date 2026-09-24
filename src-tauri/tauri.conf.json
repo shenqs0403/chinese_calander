@@ -11,12 +11,12 @@
   },
   "app": {
     "windows": [
-      {
+{
         "title": "日历",
         "width": 1080,
         "height": 580,
-        "minWidth": 960,
-        "minHeight": 585
+        "resizable": false,
+        "decorations": false
       }
     ],
     "security": {
