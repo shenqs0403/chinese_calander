@@ -11,9 +11,9 @@
   },
   "app": {
     "windows": [
-{
+      {
         "title": "日历",
-        "width": 1080,
+        "width": 980,
         "height": 580,
         "resizable": false,
         "decorations": false
@@ -32,15 +32,24 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ],
-    "targets": ["deb", "rpm"],
+    "targets": [
+      "deb",
+      "rpm"
+    ],
     "linux": {
       "deb": {
         "desktopTemplate": "desktop-template.hbs",
-        "depends": ["libwebkit2gtk-4.1-0", "libgtk-3-0"]
+        "depends": [
+          "libwebkit2gtk-4.1-0",
+          "libgtk-3-0"
+        ]
       },
       "rpm": {
         "desktopTemplate": "desktop-template.hbs",
-        "depends": ["webkit2gtk4.1", "gtk3"]
+        "depends": [
+          "webkit2gtk4.1",
+          "gtk3"
+        ]
       }
     }
   }
